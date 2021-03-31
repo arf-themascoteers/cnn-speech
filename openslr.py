@@ -6,7 +6,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-class Mnist:
+class OpenSLR:
     def get_data(self, data_type):
         URL = 'https://nnfs.io/datasets/fashion_mnist_images.zip'
         FILE = 'fashion_mnist_images.zip'

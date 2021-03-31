@@ -1,9 +1,7 @@
-import numpy as np
-import image_viewer
 from fc import FullyConnected
-from mnist import Mnist
+from openslr import OpenSLR
 
-mnist = Mnist()
+slr = OpenSLR()
 train_x,train_y = mnist.get_train_data()
 test_x,test_y = mnist.get_test_data()
 
