@@ -19,13 +19,13 @@ class FullyConnected:
         self.shuffle_train_data()
 
         self.input_layer = InputLayer(self.train_x.shape[1])
-        self.output_layer = OutputLayer(len(self.train_y), self.input_layer)
+        self.output_layer = OutputLayer(len(self.labels), self.input_layer)
         self.input_layer.prev_layer = self.output_layer
         self.accuracy = 0
         self.loss = 0
         self.add_layer(LayerDense(self.train_x.shape[1], 64))
         self.add_layer(LayerDense(64,32))
-        self.add_layer(LayerDense(32,len(self.train_y)))
+        self.add_layer(LayerDense(32,len(self.labels)))
         self.optimizer = OptimizerAdam(learning_rate=0.05, decay=5e-7)
 
 
@@ -92,4 +92,9 @@ class FullyConnected:
         x = np.expand_dims(x, axis=0)
         y = np.expand_dims(y, axis=0)
         self.forward(x,y)
-        return np.argmax(self.output_layer.output, axis=1)
+        predicted = np.argmax(self.output_layer.output, axis=1)
+        return self.accuracy
+
+    def test(self):
+        accuracy = [self.predict(i,j) for i,j in zip(self.test_x, self.test_y)]
+        return np.mean(accuracy)
