@@ -10,7 +10,7 @@ class FullyConnected:
         self.train_y = train_y
         self.test_x = test_x
         self.test_y = test_y
-        self.preprocess()
+
         self.input_layer = InputLayer(self.train_x.shape[1])
         self.output_layer = OutputLayer(len(self.train_y), self.input_layer)
         self.input_layer.prev_layer = self.output_layer
@@ -20,21 +20,6 @@ class FullyConnected:
         self.add_layer(LayerDense(64,32))
         self.add_layer(LayerDense(32,len(self.train_y)))
         self.optimizer = OptimizerAdam(learning_rate=0.05, decay=5e-7)
-
-    def preprocess(self):
-        self.train_x = (self.train_x.astype(np.float32) - 127.5) / 127.5
-        self.test_x = (self.test_x.astype(np.float32) - 127.5) / 127.5
-
-        self.train_x = self.train_x.reshape(self.train_x.shape[0], -1)
-        self.test_x = self.test_x.reshape(self.test_x.shape[0], -1)
-
-        keys = np.array(range(self.train_x.shape[0]))
-        np.random.shuffle(keys)
-        self.train_x = self.train_x[keys]
-
-        keys = np.array(range(self.test_x.shape[0]))
-        np.random.shuffle(keys)
-        self.test_x = self.test_x[keys]
 
     def add_layer(self, layer):
         source_layer = self.output_layer.prev_layer

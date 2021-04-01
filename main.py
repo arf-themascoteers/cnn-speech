@@ -1,10 +1,18 @@
-from fc import FullyConnected
-from openslr import OpenSLR
+import savee
+import preprocessor
+import fc
+import os
 
-slr = OpenSLR()
-train_x,train_y = mnist.get_train_data()
-test_x,test_y = mnist.get_test_data()
+savee.prepare_if_needed()
+train_x,train_y = savee.get_data("dev")
+test_x,test_y = savee.get_data("test")
+train_x = preprocessor.preprocess(train_x)
+test_x = preprocessor.preprocess(test_x)
 
-fc = FullyConnected(train_x, train_y, test_x, test_y)
-fc.train()
+print(len(os.listdir("data/test")))
+print(len(os.listdir("data/dev")))
+
+
+#nn = fc.FullyConnected(train_x, train_y, test_x, test_y)
+#nn.train()
 
