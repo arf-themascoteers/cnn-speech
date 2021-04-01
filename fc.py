@@ -3,13 +3,20 @@ from layer_dense import LayerDense
 from optimizer_adam import OptimizerAdam
 from output_layer import OutputLayer
 import numpy as np
+import random
 
 class FullyConnected:
     def __init__(self, train_x, train_y, test_x, test_y):
         self.train_x = train_x
-        self.train_y = train_y
         self.test_x = test_x
-        self.test_y = test_y
+
+        self.labels = np.unique(train_y)
+        self.labels.sort()
+
+        self.train_y = np.array([self.labels.tolist().index(i) for i in train_y])
+        self.test_y = np.array([self.labels.tolist().index(i) for i in test_y])
+
+        self.shuffle_train_data()
 
         self.input_layer = InputLayer(self.train_x.shape[1])
         self.output_layer = OutputLayer(len(self.train_y), self.input_layer)
@@ -20,6 +27,7 @@ class FullyConnected:
         self.add_layer(LayerDense(64,32))
         self.add_layer(LayerDense(32,len(self.train_y)))
         self.optimizer = OptimizerAdam(learning_rate=0.05, decay=5e-7)
+
 
     def add_layer(self, layer):
         source_layer = self.output_layer.prev_layer
@@ -39,6 +47,7 @@ class FullyConnected:
         predictions = np.argmax(self.output_layer.output, axis=1)
         self.accuracy = np.mean(predictions == output)
         self.loss = self.output_layer.calculated_loss
+
         return self.output_layer.output
 
     def backward(self, dvalues, y_true=None):
@@ -61,7 +70,7 @@ class FullyConnected:
             layer = layer.next_layer
 
     def train(self):
-        for epoch in range(1):
+        for epoch in range(1000):
             self.forward_backward(self.train_x, self.train_y)
             self.optimizer.optimise(self)
 
@@ -71,3 +80,16 @@ class FullyConnected:
                       f'loss: {self.loss:.3f} , ' +
                       f'lr: {self.optimizer.current_learning_rate:.3f} ')
 
+    def shuffle_train_data(self):
+        len = self.train_y.size
+        indexes = np.array(range(len))
+        np.random.shuffle(indexes)
+        self.train_x = self.train_x[indexes]
+        self.train_y = self.train_y[indexes]
+
+
+    def predict(self, x, y):
+        x = np.expand_dims(x, axis=0)
+        y = np.expand_dims(y, axis=0)
+        self.forward(x,y)
+        return np.argmax(self.output_layer.output, axis=1)

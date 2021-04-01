@@ -50,7 +50,7 @@ def make_data_for(list, mode):
         shutil.copyfile(f"data/raw/{file}",f"data/{mode}/{file}")
 
 def get_mode_counts(size):
-    n_test = int(size // (10 * 1.5))
+    n_test = int(size // 10 * 1.5)
     n_train = int(size // 10 * 8)
     n_dev = size - (n_test + n_train)
     return n_dev, n_train, n_test
