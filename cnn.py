@@ -1,3 +1,4 @@
+from activation_relu import ActivationReLU
 from input_layer import InputLayer
 from layer_cnn import LayerCNN
 from layer_dense import LayerDense
@@ -24,9 +25,9 @@ class CNN:
         self.input_layer.prev_layer = self.output_layer
         self.accuracy = 0
         self.loss = 0
-        N_FILTER = 3
-        self.add_layer(LayerCNN(self.train_x.shape[1], N_FILTER))
-        self.add_layer(LayerMaxPool(self.train_x.shape[1], N_FILTER))
+        self.add_layer(LayerCNN())
+        self.add_layer(ActivationReLU())
+        self.add_layer(LayerMaxPool(self.train_x.shape[1]))
         self.add_layer(LayerDense(672,32))
         self.add_layer(LayerDense(32,len(self.labels)))
         self.optimizer = OptimizerAdam(learning_rate=0.05, decay=5e-7)
