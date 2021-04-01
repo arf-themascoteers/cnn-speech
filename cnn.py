@@ -5,7 +5,7 @@ from output_layer import OutputLayer
 import numpy as np
 import random
 
-class FullyConnected:
+class CNN:
     def __init__(self, train_x, train_y, test_x, test_y):
         self.train_x = train_x
         self.test_x = test_x
@@ -71,7 +71,7 @@ class FullyConnected:
             layer = layer.next_layer
 
     def train(self):
-        for epoch in range(400):
+        for epoch in range(1000):
             self.forward_backward(self.train_x, self.train_y)
             self.optimizer.optimise(self)
 
@@ -82,13 +82,10 @@ class FullyConnected:
                       f'lr: {self.optimizer.current_learning_rate:.3f} ')
 
     def shuffle_train_data(self):
-        length = self.train_y.size
-        indexes = np.array(range(length))
+        len = self.train_y.size
+        indexes = np.array(range(len))
         np.random.shuffle(indexes)
-        new_x = np.zeros((len(self.train_x),len(self.train_x[0])))
-        for old_index,index in enumerate(indexes):
-            new_x[old_index] = self.train_x[index]
-        self.train_x = new_x
+        self.train_x = self.train_x[indexes]
         self.train_y = self.train_y[indexes]
 
 

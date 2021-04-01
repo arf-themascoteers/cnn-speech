@@ -5,13 +5,7 @@ import shutil
 import librosa
 import librosa.display
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.pyplot import specgram
 import pandas as pd
-import glob
-from sklearn.metrics import confusion_matrix
-import sys
-import IPython.display as ipd  # To play sound in the notebook
 
 def get_label(filename):
     m = re.search('(.+?)_', filename)
@@ -82,7 +76,7 @@ def prepare_if_needed():
         prepare()
     stat()
 
-def get_data(mode):
+def get_mfcc_data(mode):
     df = pd.DataFrame(columns=['feature'])
 
     # loop feature extraction over the entire dataset
@@ -112,4 +106,52 @@ def get_data(mode):
     a_data_frame = pd.concat([a_data_frame, pd.DataFrame(df['feature'].values.tolist())], axis=1)
     a_data_frame = a_data_frame.fillna(0)
     return a_data_frame.values, labels
+
+def get_mel_data(mode):
+    counter = 0
+    labels = []
+    mels = []
+    for index, path in enumerate(os.listdir(f"data/{mode}")):
+        X, sample_rate = librosa.load(f"data/{mode}/{path}"
+                                      , res_type='kaiser_fast'
+                                      , duration=2
+                                      , sr=44100
+                                      , offset=0.5
+                                      )
+        X, _ = librosa.effects.trim(X)
+        mel_spect = librosa.feature.melspectrogram(y=X, sr=sample_rate, n_fft=2048, hop_length=1024)
+        mel_spect = librosa.amplitude_to_db(mel_spect, ref=np.max)
+
+        mels.append(mel_spect)
+        labels.append(get_label(path))
+        counter = counter + 1
+
+    new_mels = []
+    new_labels = []
+    expected_frames = get_most_occurred_frames(mels)
+    for mel, label in zip(mels, labels):
+        if get_frame_count_matches(mel, expected_frames):
+            new_mels.append(mel)
+            new_labels.append(label)
+
+    return new_mels, new_labels
+
+def get_frame_count_matches(mel, count):
+    for data in mel:
+        length = len(data)
+        if length != count:
+            return False
+    return True
+
+def get_most_occurred_frames(mels):
+    frames = {}
+    for mel in mels:
+        for data in mel:
+            length = len(data)
+            if length not in frames:
+                frames[length] = 1
+            else:
+                frames[length] = frames[length] + 1
+
+    return max(frames, key=frames.get)
 
