@@ -19,10 +19,14 @@ def get_label(filename):
         return m.group(1)
     return None
 
+def delete_dir(path):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+
 def delete_dirs():
-    shutil.rmtree("data/dev")
-    shutil.rmtree("data/train")
-    shutil.rmtree("data/test")
+    delete_dir("data/dev")
+    delete_dir("data/train")
+    delete_dir("data/test")
 
 def create_dirs():
     os.mkdir("data/dev")
@@ -46,8 +50,8 @@ def make_data_for(list, mode):
         shutil.copyfile(f"data/raw/{file}",f"data/{mode}/{file}")
 
 def get_mode_counts(size):
-    n_test = size // 10 * 1
-    n_train = size // 10 * 8
+    n_test = int(size // (10 * 1.5))
+    n_train = int(size // 10 * 8)
     n_dev = size - (n_test + n_train)
     return n_dev, n_train, n_test
 
@@ -75,7 +79,7 @@ def stat():
 
 def prepare_if_needed():
     if not os.path.exists("data/dev"):
-        return prepare()
+        prepare()
     stat()
 
 def get_data(mode):
