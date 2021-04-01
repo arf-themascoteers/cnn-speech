@@ -1,9 +1,10 @@
 from input_layer import InputLayer
+from layer_cnn import LayerCNN
 from layer_dense import LayerDense
+from layer_maxpool import LayerMaxPool
 from optimizer_adam import OptimizerAdam
 from output_layer import OutputLayer
 import numpy as np
-import random
 
 class CNN:
     def __init__(self, train_x, train_y, test_x, test_y):
@@ -23,9 +24,10 @@ class CNN:
         self.input_layer.prev_layer = self.output_layer
         self.accuracy = 0
         self.loss = 0
-        self.add_layer(LayerDense(self.train_x.shape[1], 128))
-        self.add_layer(LayerDense(128,64))
-        self.add_layer(LayerDense(64,32))
+        N_FILTER = 3
+        self.add_layer(LayerCNN(self.train_x.shape[1], N_FILTER))
+        self.add_layer(LayerMaxPool(self.train_x.shape[1], N_FILTER))
+        self.add_layer(LayerDense(672,32))
         self.add_layer(LayerDense(32,len(self.labels)))
         self.optimizer = OptimizerAdam(learning_rate=0.05, decay=5e-7)
 
@@ -71,7 +73,7 @@ class CNN:
             layer = layer.next_layer
 
     def train(self):
-        for epoch in range(1000):
+        for epoch in range(400):
             self.forward_backward(self.train_x, self.train_y)
             self.optimizer.optimise(self)
 
@@ -82,10 +84,13 @@ class CNN:
                       f'lr: {self.optimizer.current_learning_rate:.3f} ')
 
     def shuffle_train_data(self):
-        len = self.train_y.size
-        indexes = np.array(range(len))
+        length = self.train_y.size
+        indexes = np.array(range(length))
         np.random.shuffle(indexes)
-        self.train_x = self.train_x[indexes]
+        new_x = np.zeros((len(self.train_x),len(self.train_x[0])))
+        for old_index,index in enumerate(indexes):
+            new_x[old_index] = self.train_x[index]
+        self.train_x = new_x
         self.train_y = self.train_y[indexes]
 
 

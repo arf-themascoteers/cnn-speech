@@ -6,3 +6,9 @@ def preprocess_mfcc(X):
     std = np.std(X, axis=0)
     X = (X - mean) / std
     return X
+
+def preprocess_mel(X):
+    mean = np.mean(X)
+    std = np.std(X)
+    X = (X - mean) / std
+    return X
