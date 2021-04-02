@@ -42,7 +42,7 @@ class LayerMaxPool(Layer):
                 for im_region, i, j in self.iterate_regions(self.inputs[item][kernel]):
                     max_index = np.argmax(im_region)
                     (x,y) = np.unravel_index(max_index,(self.pool,self.pool))
-                    self.dinputs[kernel, i+x, j+y] = dvalues[item, kernel, height//self.pool, width//self.pool]
+                    self.dinputs[item, kernel, i+x, j+y] = dvalues[item, kernel, i//self.pool, j//self.pool]
 
         return self.dinputs
 

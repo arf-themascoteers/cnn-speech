@@ -12,6 +12,7 @@ class LayerFlatten(Layer):
         self.width = None
         self.inputs = None
         self.output = None
+        self.dinputs = None
 
     def forward(self, inputs, y_true=None):
         self.inputs = inputs
@@ -20,6 +21,6 @@ class LayerFlatten(Layer):
         return self.output
 
     def backward(self, dvalues, y_true=None):
-        self.dvalues = dvalues.reshape(self.n_items, self.n_filters, self.height, self.width)
+        self.dinputs = dvalues.reshape(self.n_items, self.n_filters, self.height, self.width)
 
 
