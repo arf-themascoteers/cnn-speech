@@ -33,7 +33,8 @@ class CNN:
 
         self.accuracy = 0
         self.loss = 0
-        self.N_EPOCH = 401
+        self.N_EPOCH = 10
+        self.BATCH_SIZE = 4
 
 
     def add_layer(self, layer):
@@ -70,14 +71,29 @@ class CNN:
 
     def train(self):
         for epoch in range(self.N_EPOCH):
-            self.forward_backward(self.train_x, self.train_y)
-            self.optimizer.optimise(self)
+            self.train_epoch(epoch)
 
-            if not epoch % 100:
-                print(f'epoch: {epoch} , ' +
-                      f'acc: {self.accuracy:.3f} , ' +
-                      f'loss: {self.loss:.3f} , ' +
-                      f'lr: {self.optimizer.current_learning_rate:.3f} ')
+
+    def train_epoch(self, epoch):
+        iterations = self.train_y.shape[0] // self.BATCH_SIZE
+        if self.train_y.shape[0] % self.BATCH_SIZE != 0:
+            iterations = iterations + 1
+
+        for i in iterations:
+            self.train_iteration(epoch, i)
+
+        if not epoch % 100:
+            print(f'epoch: {epoch} , ' +
+                  f'acc: {self.accuracy:.3f} , ' +
+                  f'loss: {self.loss:.3f} , ' +
+                  f'lr: {self.optimizer.current_learning_rate:.3f} ')
+
+    def train_iteration(self, epoch, i):
+        print(f"Epoch#${epoch} Batch#{i}")
+        start = i*self.BATCH_SIZE
+        end = i*self.BATCH_SIZE + self.BATCH_SIZE
+        self.forward_backward(self.train_x[start: end], self.train_y[start:end])
+        self.optimizer.optimise(self)
 
     def shuffle_train_data(self):
         length = self.train_y.size
