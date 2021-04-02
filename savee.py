@@ -74,7 +74,7 @@ def stat():
 def prepare_if_needed():
     if not os.path.exists("data/dev"):
         prepare()
-    stat()
+    #stat()
 
 def get_mfcc_data(mode):
     df = pd.DataFrame(columns=['feature'])

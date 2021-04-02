@@ -29,7 +29,7 @@ class CNN:
         layer = self.add_layer(LayerCNN(self.input_layer))
         layer = self.add_layer(ActivationReLU(layer))
         layer = self.add_layer(LayerMaxPool(layer))
-        layer = self.add_layer(LayerDense(layer, 2880, len(self.labels)))
+        layer = self.add_layer(LayerDense(layer, 2560, len(self.labels)))
 
         self.accuracy = 0
         self.loss = 0
@@ -70,6 +70,7 @@ class CNN:
         self.backward(dvalues, output)
 
     def train(self):
+        print(f"Starting with {self.train_y.shape[0]} test data. {self.N_EPOCH} epoch and {self.BATCH_SIZE} batches")
         for epoch in range(self.N_EPOCH):
             self.train_epoch(epoch)
 
@@ -89,7 +90,7 @@ class CNN:
                   f'lr: {self.optimizer.current_learning_rate:.3f} ')
 
     def train_iteration(self, epoch, i):
-        print(f"Epoch#${epoch} Batch#{i}")
+        print(f"Epoch#{epoch} Batch#{i}")
         start = i*self.BATCH_SIZE
         end = i*self.BATCH_SIZE + self.BATCH_SIZE
         self.forward_backward(self.train_x[start: end], self.train_y[start:end])

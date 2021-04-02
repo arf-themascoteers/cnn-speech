@@ -23,26 +23,26 @@ class LayerMaxPool(Layer):
 
     def forward(self, inputs, y_true=None):
         self.inputs = inputs
-        n_filters, n_items, height, width = self.inputs.shape
-        self.output = np.zeros((n_filters, n_items, height//self.pool, width//self.pool))
+        n_items, n_filters, height, width = self.inputs.shape
+        self.output = np.zeros((n_items, n_filters, height//self.pool, width//self.pool))
         self.n_filters = n_filters
-        for filter in range(self.n_filters):
-            for item in range(n_items):
-                for im_region, i, j in self.iterate_regions(self.inputs[filter][item]):
-                    self.output[filter, item, i, j] = np.amax(im_region, axis=(0, 1))
+        for item in range(n_items):
+            for kernel in range(self.n_filters):
+                for im_region, i, j in self.iterate_regions(self.inputs[item][kernel]):
+                    self.output[item, kernel, i, j] = np.amax(im_region, axis=(0, 1))
 
         return self.output
 
     def backward(self, dvalues, y_true=None):
-        n_filters, n_items, height, width = self.inputs.shape
+        n_items, n_filters, height, width = self.inputs.shape
         self.dinputs = np.zeros(self.inputs.shape)
 
-        for filter in range(self.n_filters):
-            for item in range(n_items):
-                for im_region, i, j in self.iterate_regions(self.inputs[filter][item]):
+        for item in range(n_items):
+            for kernel in range(self.n_filters):
+                for im_region, i, j in self.iterate_regions(self.inputs[item][kernel]):
                     max_index = np.argmax(im_region)
                     (x,y) = np.unravel_index(max_index,(self.pool,self.pool))
-                    self.dinputs[filter, i+x, j+y] = dvalues[filter, height//self.pool, width//self.pool]
+                    self.dinputs[kernel, i+x, j+y] = dvalues[item, kernel, height//self.pool, width//self.pool]
 
         return self.dinputs
 
