@@ -29,8 +29,7 @@ class CNN:
         layer = self.add_layer(LayerCNN(self.input_layer))
         layer = self.add_layer(ActivationReLU(layer))
         layer = self.add_layer(LayerMaxPool(layer))
-        layer = self.add_layer(LayerMaxPool(layer))
-        layer = self.add_layer(LayerDense(layer, 32, len(self.labels)))
+        layer = self.add_layer(LayerDense(layer, 2880, len(self.labels)))
 
         self.accuracy = 0
         self.loss = 0
