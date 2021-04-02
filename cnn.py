@@ -85,18 +85,17 @@ class CNN:
         for i in range(iterations):
             self.train_iteration(epoch, i)
 
-        if not epoch % 100:
-            print(f'epoch: {epoch} , ' +
-                  f'acc: {self.accuracy:.3f} , ' +
-                  f'loss: {self.loss:.3f} , ' +
-                  f'lr: {self.optimizer.current_learning_rate:.3f} ')
-
     def train_iteration(self, epoch, i):
         print(f"Epoch#{epoch} Batch#{i}")
         start = i*self.BATCH_SIZE
         end = i*self.BATCH_SIZE + self.BATCH_SIZE
         self.forward_backward(self.train_x[start: end], self.train_y[start:end])
         self.optimizer.optimise(self)
+
+        print(f'epoch: {epoch} , ' +
+              f'acc: {self.accuracy:.3f} , ' +
+              f'loss: {self.loss:.3f} , ' +
+              f'lr: {self.optimizer.current_learning_rate:.3f} ')
 
     def shuffle_train_data(self):
         length = self.train_y.size
