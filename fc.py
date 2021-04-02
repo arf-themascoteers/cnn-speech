@@ -23,9 +23,11 @@ class FullyConnected:
         self.input_layer.next_layer = self.output_layer
         layer = self.add_layer(LayerDense(self.input_layer, self.train_x.shape[1], 512))
         layer = self.add_layer(ActivationReLU(layer))
+        layer = self.add_layer(LayerDense(layer, 512, 512))
+        layer = self.add_layer(ActivationReLU(layer))
         layer = self.add_layer(LayerDense(layer, 512, len(self.labels)))
 
-        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.0001)
+        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.001)
 
         self.accuracy = 0
         self.loss = 0
