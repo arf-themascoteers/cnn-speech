@@ -19,28 +19,28 @@ class CNN:
         self.test_y = np.array([self.labels.tolist().index(i) for i in test_y])
 
         self.shuffle_train_data()
+        exit(0)
+        self.input_layer = InputLayer()
+        self.output_layer = OutputLayer(self.input_layer)
+        self.input_layer.next_layer = self.output_layer
+        layer = self.add_layer(LayerDense(self.input_layer, self.train_x.shape[1], 1024))
+        layer = self.add_layer(ActivationReLU(layer))
+        layer = self.add_layer(LayerDense(layer, 1024, len(self.labels)))
+        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.0001)
 
-        self.input_layer = InputLayer(self.train_x.shape[1])
-        self.output_layer = OutputLayer(len(self.labels), self.input_layer)
-        self.input_layer.prev_layer = self.output_layer
         self.accuracy = 0
         self.loss = 0
-        self.add_layer(LayerCNN())
-        self.add_layer(ActivationReLU())
-        self.add_layer(LayerMaxPool(self.train_x.shape[1]))
-        self.add_layer(LayerDense(672,32))
-        self.add_layer(LayerDense(32,len(self.labels)))
-        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.001)
+        self.N_EPOCH = 401
 
 
     def add_layer(self, layer):
         source_layer = self.output_layer.prev_layer
-
         source_layer.next_layer = layer
         layer.prev_layer = source_layer
 
         layer.next_layer = self.output_layer
         self.output_layer.prev_layer = layer
+        return layer
 
     def forward(self, input, output):
         layer = self.input_layer
@@ -65,16 +65,8 @@ class CNN:
         dvalues = self.forward(input, output)
         self.backward(dvalues, output)
 
-    def print_forward(self):
-        layer = self.input_layer
-        print("Machine")
-        print("=======")
-        while layer is not None:
-            print(f"{layer.n_neurons} - {type(layer).__name__}")
-            layer = layer.next_layer
-
     def train(self):
-        for epoch in range(400):
+        for epoch in range(self.N_EPOCH):
             self.forward_backward(self.train_x, self.train_y)
             self.optimizer.optimise(self)
 
@@ -88,10 +80,7 @@ class CNN:
         length = self.train_y.size
         indexes = np.array(range(length))
         np.random.shuffle(indexes)
-        new_x = np.zeros((len(self.train_x),len(self.train_x[0])))
-        for old_index,index in enumerate(indexes):
-            new_x[old_index] = self.train_x[index]
-        self.train_x = new_x
+        self.train_x = self.train_x[indexes]
         self.train_y = self.train_y[indexes]
 
 
@@ -99,9 +88,11 @@ class CNN:
         x = np.expand_dims(x, axis=0)
         y = np.expand_dims(y, axis=0)
         self.forward(x,y)
-        predicted = np.argmax(self.output_layer.output, axis=1)
-        return self.accuracy
+        np.argmax(self.output_layer.output, axis=1)
+        return self.accuracy, self.loss
 
     def test(self):
-        accuracy = [self.predict(i,j) for i,j in zip(self.test_x, self.test_y)]
-        return np.mean(accuracy)
+        accuracy_loss = [self.predict(i,j) for i,j in zip(self.test_x, self.test_y)]
+        accuracy = [i[0] for i in accuracy_loss]
+        loss = [i[1] for i in accuracy_loss]
+        return np.mean(accuracy), np.mean(loss)
