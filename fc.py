@@ -21,17 +21,14 @@ class FullyConnected:
         self.input_layer = InputLayer()
         self.output_layer = OutputLayer(self.input_layer)
         self.input_layer.next_layer = self.output_layer
-        layer = self.add_layer(LayerDense(self.input_layer, self.train_x.shape[1], 512))
+        layer = self.add_layer(LayerDense(self.input_layer, self.train_x.shape[1], 1024))
         layer = self.add_layer(ActivationReLU(layer))
-        layer = self.add_layer(LayerDense(layer, 512, 512))
-        layer = self.add_layer(ActivationReLU(layer))
-        layer = self.add_layer(LayerDense(layer, 512, len(self.labels)))
-
-        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.001)
+        layer = self.add_layer(LayerDense(layer, 1024, len(self.labels)))
+        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.0001)
 
         self.accuracy = 0
         self.loss = 0
-        self.N_EPOCH = 901
+        self.N_EPOCH = 401
 
 
     def add_layer(self, layer):
