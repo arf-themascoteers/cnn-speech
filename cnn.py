@@ -2,6 +2,7 @@ from activation_relu import ActivationReLU
 from input_layer import InputLayer
 from layer_cnn import LayerCNN
 from layer_dense import LayerDense
+from layer_flatten import LayerFlatten
 from layer_maxpool import LayerMaxPool
 from optimizer_adam import OptimizerAdam
 from output_layer import OutputLayer
@@ -29,6 +30,7 @@ class CNN:
         layer = self.add_layer(LayerCNN(self.input_layer))
         layer = self.add_layer(ActivationReLU(layer))
         layer = self.add_layer(LayerMaxPool(layer))
+        layer = self.add_layer(LayerFlatten(layer))
         layer = self.add_layer(LayerDense(layer, 2560, len(self.labels)))
 
         self.accuracy = 0
