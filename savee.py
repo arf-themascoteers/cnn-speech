@@ -140,7 +140,12 @@ def trim_mel(mel):
     expected_height = 128
     expected_width = 80
     arr = np.zeros((128, 80))
+    if len(mel) < expected_height:
+        return None
+
     for i in range(expected_height):
+        if len(mel[i]) < expected_width:
+            return None
         for j in range(expected_width):
             if mel[i][j] is None:
                 return None

@@ -24,7 +24,7 @@ class LayerMaxPool(Layer):
     def forward(self, inputs, y_true=None):
         self.inputs = inputs
         n_filters, n_items, height, width = self.inputs.shape
-        self.output = np.zeros(n_filters, n_items, height//self.pool, width//self.pool)
+        self.output = np.zeros((n_filters, n_items, height//self.pool, width//self.pool))
         self.n_filters = n_filters
         for filter in range(self.n_filters):
             for item in range(n_items):

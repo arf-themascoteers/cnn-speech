@@ -17,7 +17,7 @@ class LayerCNN(Layer):
         new_height = height + self.stride - 1
         new_width = width + self.stride - 1
         out = np.zeros((samples, new_height, new_width))
-        pad = self.stride / 2
+        pad = self.stride // 2
         out[:, pad: pad + height, pad: pad + width] = inputs
         return out
 
