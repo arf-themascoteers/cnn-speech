@@ -19,14 +19,18 @@ class CNN:
         self.test_y = np.array([self.labels.tolist().index(i) for i in test_y])
 
         self.shuffle_train_data()
-        exit(0)
+
+        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.0001)
+
         self.input_layer = InputLayer()
         self.output_layer = OutputLayer(self.input_layer)
         self.input_layer.next_layer = self.output_layer
-        layer = self.add_layer(LayerDense(self.input_layer, self.train_x.shape[1], 1024))
+
+        layer = self.add_layer(LayerCNN(self.input_layer))
         layer = self.add_layer(ActivationReLU(layer))
-        layer = self.add_layer(LayerDense(layer, 1024, len(self.labels)))
-        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.0001)
+        layer = self.add_layer(LayerMaxPool(layer))
+        layer = self.add_layer(LayerMaxPool(layer))
+        layer = self.add_layer(LayerDense(layer, 32, len(self.labels)))
 
         self.accuracy = 0
         self.loss = 0

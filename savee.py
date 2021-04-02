@@ -129,33 +129,20 @@ def get_mel_data(mode):
     new_mels = []
     new_labels = []
     for mel, label in zip(mels, labels):
-        if get_dimension_matches(mel):
+        mel = trim_mel(mel)
+        if mel is not None:
             new_mels.append(mel)
             new_labels.append(label)
 
     return new_mels, new_labels
 
-def get_dimension_matches(mel):
+def trim_mel(mel):
     expected_height = 128
-    expected_width = 87
-    if len(mel) != expected_height:
-        return False
-
-    for data in mel:
-        length = len(data)
-        if length != expected_width:
-            return False
-    return True
-
-# def get_most_occurred_frames(mels):
-#     frames = {}
-#     for mel in mels:
-#         for data in mel:
-#             length = len(data)
-#             if length not in frames:
-#                 frames[length] = 1
-#             else:
-#                 frames[length] = frames[length] + 1
-#
-#     return max(frames, key=frames.get)
-
+    expected_width = 80
+    arr = np.zeros((128, 80))
+    for i in range(expected_height):
+        for j in range(expected_width):
+            if mel[i][j] is None:
+                return None
+            arr[i,j] = mel[i][j]
+    return arr

@@ -1,6 +1,7 @@
 import numpy as np
 
 from activation_relu import ActivationReLU
+from cnn import CNN
 from layer_dense import LayerDense
 
 
@@ -23,7 +24,20 @@ class OptimizerAdam :
         while layer is not None:
             if isinstance(layer, LayerDense):
                 self.update_params_dense(layer)
+            if isinstance(layer, CNN):
+                self.update_params_cnn(layer)
             layer = layer.next_layer
+
+    def update_params_cnn (self, layer):
+        if not hasattr (layer, 'weight_cache' ):
+            layer.weight_momentums = np.zeros_like(layer.weights)
+            layer.weight_cache = np.zeros_like(layer.weights)
+
+        layer.weight_momentums = self.beta_1 * layer.weight_momentums + ( 1 - self.beta_1) * layer.dweights
+        weight_momentums_corrected = layer.weight_momentums / ( 1 - self.beta_1 ** (self.iterations + 1 ))
+        layer.weight_cache = self.beta_2 * layer.weight_cache + ( 1 - self.beta_2) * layer.dweights ** 2
+        weight_cache_corrected = layer.weight_cache / ( 1 - self.beta_2 ** (self.iterations + 1 ))
+        layer.weights += - self.current_learning_rate * weight_momentums_corrected / (np.sqrt(weight_cache_corrected) + self.epsilon)
 
     def update_params_dense (self, layer):
         if not hasattr (layer, 'weight_cache' ):

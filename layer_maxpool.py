@@ -4,10 +4,9 @@ from layer import Layer
 
 
 class LayerMaxPool(Layer):
-    def __init__(self, n_inputs, n_filters):
-        super().__init__(n_inputs, n_inputs)
+    def __init__(self, prev_layer):
+        super().__init__(prev_layer)
         self.inputs = None
-        self.n_filters = n_filters
         self.pool = 2
 
     def iterate_regions(self, frame):
