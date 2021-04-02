@@ -9,8 +9,8 @@ class LayerMaxPool(Layer):
         self.inputs = None
         self.pool = 2
 
-    def iterate_regions(self, frame):
-        height, width = frame.shape
+    def iterate_regions(self, image):
+        height, width = image.shape
         new_height = height//self.pool
         new_width = width//self.pool
 
@@ -18,7 +18,7 @@ class LayerMaxPool(Layer):
             if i + self.stride < height:
                 for j in range(new_width):
                     if j + self.stride < width:
-                        im_region = frame[(i *self.pool):(i *self.pool +self.pool), (j*self.pool):(j*self.pool + self.pool)]
+                        im_region = image[(i *self.pool):(i *self.pool +self.pool), (j*self.pool):(j*self.pool + self.pool)]
                         yield im_region, i, j
 
 
