@@ -13,12 +13,12 @@ class LayerCNN(Layer):
         self.inputs = None
 
     def padding(self, input):
-        height, width = input.shape
+        n_items, height, width = input.shape
         new_height = height + self.stride - 1
         new_width = width + self.stride - 1
-        out = np.zeros((new_height, new_width))
+        out = np.zeros((n_items, new_height, new_width))
         pad = self.stride // 2
-        out[pad: pad + height, pad: pad + width] = input
+        out[:, pad: pad + height, pad: pad + width] = input
         return out
 
     def iterate_regions(self, image):
@@ -39,9 +39,9 @@ class LayerCNN(Layer):
 
         return self.output
 
-    def apply_filter_on_item(self, weights, input_image, output_image):
+    def apply_filter_on_item(self, weights, input_image, output_images):
         for kernel in range(self.N_FILTERS):
-            self.apply_filter_on_item_for_kernel(weights[kernel], input_image, output_image)
+            self.apply_filter_on_item_for_kernel(weights[kernel], input_image, output_images[kernel])
 
     def apply_filter_on_item_for_kernel(self, kernel, input_image, output_image):
         for im_region, i, j in self.iterate_regions(input_image):
@@ -55,9 +55,9 @@ class LayerCNN(Layer):
         for item in range(self.inputs.shape[0]):
             self.backward_filter_on_item(self.weights, self.inputs[item], dvalues[item], self.dweights, self.dinputs[item])
 
-    def backward_filter_on_item(self, weights, input_image, back_output_image, dweights, dinputs):
+    def backward_filter_on_item(self, weights, input_image, back_output_images, dweights, dinputs):
         for kernel in range(self.N_FILTERS):
-            self.backward_filter_on_item_for_kernel(weights[kernel], input_image, back_output_image, dweights[kernel], dinputs[kernel])
+            self.backward_filter_on_item_for_kernel(weights[kernel], input_image, back_output_images[kernel], dweights[kernel], dinputs[kernel])
 
 
     def backward_filter_on_item_for_kernel(self, kernel, input_image, back_output_image, dweight, dinput):

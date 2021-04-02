@@ -80,7 +80,7 @@ class CNN:
         if self.train_y.shape[0] % self.BATCH_SIZE != 0:
             iterations = iterations + 1
 
-        for i in iterations:
+        for i in range(iterations):
             self.train_iteration(epoch, i)
 
         if not epoch % 100:
