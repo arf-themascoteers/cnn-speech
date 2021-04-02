@@ -22,14 +22,13 @@ class FullyConnected:
         self.output_layer = OutputLayer(self.input_layer)
         self.input_layer.next_layer = self.output_layer
 
-        layer = self.add_layer(LayerDense(self.input_layer, self.train_x.shape[1], 64))
-        layer = self.add_layer(ActivationReLU(layer))
-        layer = self.add_layer(LayerDense(64,len(self.labels), layer))
+        layer = self.add_layer(LayerDense(self.input_layer, self.train_x.shape[1], len(self.labels)))
         self.add_layer(ActivationReLU(layer))
         self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.0001)
 
         self.accuracy = 0
         self.loss = 0
+        self.N_EPOCH = 400
 
 
     def add_layer(self, layer):
@@ -64,16 +63,9 @@ class FullyConnected:
         dvalues = self.forward(input, output)
         self.backward(dvalues, output)
 
-    def print_forward(self):
-        layer = self.input_layer
-        print("Machine")
-        print("=======")
-        while layer is not None:
-            print(f"{layer.n_neurons} - {type(layer).__name__}")
-            layer = layer.next_layer
 
     def train(self):
-        for epoch in range(300):
+        for epoch in range(self.N_EPOCH):
             self.forward_backward(self.train_x, self.train_y)
             self.optimizer.optimise(self)
 
@@ -87,10 +79,7 @@ class FullyConnected:
         length = self.train_y.size
         indexes = np.array(range(length))
         np.random.shuffle(indexes)
-        new_x = np.zeros((len(self.train_x),len(self.train_x[0])))
-        for old_index,index in enumerate(indexes):
-            new_x[old_index] = self.train_x[index]
-        self.train_x = new_x
+        self.train_x = self.train_x[indexes]
         self.train_y = self.train_y[indexes]
 
 

@@ -6,6 +6,8 @@ from layer import Layer
 class ActivationReLU(Layer):
     def __init__(self, prev_layer):
         super().__init__(prev_layer)
+        self.inputs = None
+        self.dinputs = None
 
     def forward(self, inputs, y_true=None):
         self.inputs = inputs
