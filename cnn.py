@@ -30,7 +30,7 @@ class CNN:
         self.add_layer(LayerMaxPool(self.train_x.shape[1]))
         self.add_layer(LayerDense(672,32))
         self.add_layer(LayerDense(32,len(self.labels)))
-        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=5e-7)
+        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.001)
 
 
     def add_layer(self, layer):

@@ -1,9 +1,9 @@
+from activation_relu import ActivationReLU
 from input_layer import InputLayer
 from layer_dense import LayerDense
 from optimizer_adam import OptimizerAdam
 from output_layer import OutputLayer
 import numpy as np
-import random
 
 class FullyConnected:
     def __init__(self, train_x, train_y, test_x, test_y):
@@ -18,26 +18,28 @@ class FullyConnected:
 
         self.shuffle_train_data()
 
-        self.input_layer = InputLayer(self.train_x.shape[1])
-        self.output_layer = OutputLayer(len(self.labels), self.input_layer)
-        self.input_layer.prev_layer = self.output_layer
+        self.input_layer = InputLayer()
+        self.output_layer = OutputLayer(self.input_layer)
+        self.input_layer.next_layer = self.output_layer
+
+        layer = self.add_layer(LayerDense(self.input_layer, self.train_x.shape[1], 64))
+        layer = self.add_layer(ActivationReLU(layer))
+        layer = self.add_layer(LayerDense(64,len(self.labels), layer))
+        self.add_layer(ActivationReLU(layer))
+        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.0001)
+
         self.accuracy = 0
         self.loss = 0
-        self.add_layer(LayerDense(self.train_x.shape[1], 128))
-        self.add_layer(LayerDense(128,64))
-        self.add_layer(LayerDense(64,32))
-        self.add_layer(LayerDense(32,len(self.labels)))
-        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=5e-7)
 
 
     def add_layer(self, layer):
         source_layer = self.output_layer.prev_layer
-
         source_layer.next_layer = layer
         layer.prev_layer = source_layer
 
         layer.next_layer = self.output_layer
         self.output_layer.prev_layer = layer
+        return layer
 
     def forward(self, input, output):
         layer = self.input_layer
@@ -71,7 +73,7 @@ class FullyConnected:
             layer = layer.next_layer
 
     def train(self):
-        for epoch in range(400):
+        for epoch in range(300):
             self.forward_backward(self.train_x, self.train_y)
             self.optimizer.optimise(self)
 
@@ -96,9 +98,11 @@ class FullyConnected:
         x = np.expand_dims(x, axis=0)
         y = np.expand_dims(y, axis=0)
         self.forward(x,y)
-        predicted = np.argmax(self.output_layer.output, axis=1)
-        return self.accuracy
+        np.argmax(self.output_layer.output, axis=1)
+        return self.accuracy, self.loss
 
     def test(self):
-        accuracy = [self.predict(i,j) for i,j in zip(self.test_x, self.test_y)]
-        return np.mean(accuracy)
+        accuracy_loss = [self.predict(i,j) for i,j in zip(self.test_x, self.test_y)]
+        accuracy = [i[0] for i in accuracy_loss]
+        loss = [i[1] for i in accuracy_loss]
+        return np.mean(accuracy), np.mean(loss)

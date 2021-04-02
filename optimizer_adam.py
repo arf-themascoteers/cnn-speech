@@ -1,5 +1,6 @@
 import numpy as np
 
+from activation_relu import ActivationReLU
 from layer_dense import LayerDense
 
 
@@ -21,10 +22,10 @@ class OptimizerAdam :
         layer = fc.input_layer
         while layer is not None:
             if isinstance(layer, LayerDense):
-                self.update_params(layer)
+                self.update_params_dense(layer)
             layer = layer.next_layer
 
-    def update_params ( self , layer ):
+    def update_params_dense (self, layer):
         if not hasattr (layer, 'weight_cache' ):
             layer.weight_momentums = np.zeros_like(layer.weights)
             layer.weight_cache = np.zeros_like(layer.weights)
@@ -54,3 +55,4 @@ class OptimizerAdam :
         self.pre_update_params()
         self.update_params_fc(fc)
         self.post_update_params()
+

@@ -2,11 +2,9 @@ from abc import ABC, abstractmethod
 
 
 class Layer:
-    def __init__(self, n_inputs, n_neurons, prev_layer = None, next_layer = None):
-        self.n_inputs = n_inputs
-        self.n_neurons = n_neurons
+    def __init__(self, prev_layer):
         self.prev_layer = prev_layer
-        self.next_layer = next_layer
+        self.next_layer = None
         self.output = None
 
     @abstractmethod

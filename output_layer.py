@@ -5,8 +5,8 @@ import numpy as np
 
 
 class OutputLayer(Layer):
-    def __init__(self, n_inputs, prev_layer):
-        super().__init__(n_inputs, 1, prev_layer)
+    def __init__(self, prev_layer):
+        super().__init__(prev_layer)
         self.activation = ActivationSoftmax()
         self.loss = LossCategoricalCrossentropy()
         self.calculated_loss = 0

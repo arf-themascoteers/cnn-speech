@@ -9,7 +9,7 @@ class InputLayer(Layer):
     def backward(self, dvalues, y_true=None):
         pass
 
-    def __init__(self, n_inputs):
-        super().__init__(n_inputs, n_inputs)
+    def __init__(self):
+        super().__init__(None)
 
 

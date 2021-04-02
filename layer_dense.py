@@ -4,8 +4,8 @@ from layer import Layer
 
 
 class LayerDense(Layer):
-    def __init__(self, n_inputs, n_neurons):
-        super().__init__(n_inputs, n_neurons)
+    def __init__(self, prev_layer,n_inputs, n_neurons):
+        super().__init__(prev_layer)
         self.weights = 0.01 * np.random.randn(n_inputs, n_neurons)
         self.biases = np.zeros((1, n_neurons))
 

@@ -4,8 +4,8 @@ from layer import Layer
 
 
 class ActivationReLU(Layer):
-    def __init__(self):
-        super().__init__(1,1)
+    def __init__(self, prev_layer):
+        super().__init__(prev_layer)
 
     def forward(self, inputs, y_true=None):
         self.inputs = inputs
