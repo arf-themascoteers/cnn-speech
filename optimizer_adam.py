@@ -1,7 +1,7 @@
 import numpy as np
 
 from activation_relu import ActivationReLU
-from cnn import CNN
+from layer_cnn import LayerCNN
 from layer_dense import LayerDense
 
 
@@ -24,7 +24,7 @@ class OptimizerAdam :
         while layer is not None:
             if isinstance(layer, LayerDense):
                 self.update_params_dense(layer)
-            if isinstance(layer, CNN):
+            if isinstance(layer, LayerCNN):
                 self.update_params_cnn(layer)
             layer = layer.next_layer
 
