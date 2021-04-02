@@ -57,13 +57,13 @@ class LayerCNN(Layer):
 
     def backward_filter_on_item(self, weights, input_image, back_output_images, dweights, dinputs):
         for kernel in range(self.N_FILTERS):
-            self.backward_filter_on_item_for_kernel(weights[kernel], input_image, back_output_images[kernel], dweights[kernel], dinputs[kernel])
+            self.backward_filter_on_item_for_kernel(weights[kernel], input_image, back_output_images[kernel], dweights[kernel], dinputs)
 
 
     def backward_filter_on_item_for_kernel(self, kernel, input_image, back_output_image, dweight, dinput):
         for im_region, i, j in self.iterate_regions(input_image):
             dweight += back_output_image[i, j] * im_region
-            dinput += back_output_image[i, j] * kernel
+            dinput[i:i+self.stride, j:j+self.stride] += back_output_image[i, j] * kernel
 
 
 
