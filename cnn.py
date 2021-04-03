@@ -28,7 +28,7 @@ class CNN:
         self.train_x = np.expand_dims(self.train_x, axis=1)
         self.test_x = np.expand_dims(self.test_x, axis=1)
 
-        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.0001)
+        self.optimizer = OptimizerAdam(learning_rate=0.05, decay=0.001)
 
         self.input_layer = InputLayer()
         self.output_layer = OutputLayer(self.input_layer)
@@ -48,12 +48,15 @@ class CNN:
 
         flatten = self.add_layer(LayerFlatten(maxpool1))
         n_neurons = 10240
-        dense = self.add_layer(LayerDense(flatten, n_neurons, len(self.labels)))
+        dense1 = self.add_layer(LayerDense(flatten, n_neurons, 64))
+        relu4 = self.add_layer(ActivationReLU(dense1))
+        dense2 = self.add_layer(LayerDense(relu4, 64, len(self.labels)))
+        len(self.labels)
 
         self.accuracy = 0
         self.loss = 0
         self.N_EPOCH = 5
-        self.BATCH_SIZE = 20
+        self.BATCH_SIZE = 5
 
     def get_count_output(self, cnn, maxpool, height, width):
         return (height // maxpool.pool) * (width // maxpool.pool) * cnn.N_FILTERS
@@ -121,8 +124,7 @@ class CNN:
 
     def print_iteration_summary(self, epoch, iteration):
         print(f"Epoch#{epoch} Batch#{iteration}")
-        print(f'epoch: {epoch} , ' +
-              f'acc: {self.accuracy:.3f} , ' +
+        print(f'acc: {self.accuracy:.3f} , ' +
               f'loss: {self.loss:.3f} , ' +
               f'lr: {self.optimizer.current_learning_rate:.3f} ')
 

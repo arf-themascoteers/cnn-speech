@@ -4,7 +4,7 @@ import preprocessor
 
 savee.prepare_if_needed()
 
-train_x,train_y = savee.get_mel_data("train")
+train_x,train_y = savee.get_mel_data("dev")
 test_x,test_y = savee.get_mel_data("test")
 
 train_x = preprocessor.preprocess_mel(train_x)
@@ -14,6 +14,6 @@ nn = cnn.CNN(train_x, train_y, test_x, test_y)
 nn.train()
 
 accuracy, loss = nn.test()
-print(f"Test Accuracy {accuracy}. Test Loss ${loss}")
+print(f"Test Accuracy {accuracy}. Test Loss {loss}")
 
 

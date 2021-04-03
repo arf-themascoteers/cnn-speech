@@ -6,7 +6,7 @@ from layer import Layer
 class LayerCNN(Layer):
     def __init__(self, prev_layer, input_windows):
         super().__init__(prev_layer)
-        self.stride = 3
+        self.stride = 5
         self.N_FILTERS = 4
         self.input_windows = input_windows
         self.weights = np.random.randn(self.N_FILTERS, self.input_windows, self.stride, self.stride) / (self.stride * self.stride)
