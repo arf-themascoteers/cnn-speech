@@ -37,6 +37,7 @@ class LayerCNN(Layer):
         for item in range(n_items):
             self.apply_filter_on_item(self.weights, self.inputs[item], self.output[item])
 
+        self.output = self.output.reshape(-1,height, width)
         return self.output
 
     def apply_filter_on_item(self, weights, input_image, output_images):
