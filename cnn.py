@@ -38,12 +38,8 @@ class CNN:
         relu1 = self.add_layer(ActivationReLU(cnn_layer1))
         maxpool1 = self.add_layer(LayerMaxPool(relu1))
 
-        cnn_layer2 = self.add_layer(LayerCNN(maxpool1))
-        relu2 = self.add_layer(ActivationReLU(cnn_layer2))
-        maxpool2 = self.add_layer(LayerMaxPool(relu2))
-
-        flatten = self.add_layer(LayerFlatten(maxpool2))
-        n_neurons = 2560
+        flatten = self.add_layer(LayerFlatten(maxpool1))
+        n_neurons = 10240
         dense = self.add_layer(LayerDense(flatten, n_neurons, len(self.labels)))
 
         self.accuracy = 0
