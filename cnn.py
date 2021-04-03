@@ -38,22 +38,18 @@ class CNN:
         relu1 = self.add_layer(ActivationReLU(cnn_layer1))
         maxpool1 = self.add_layer(LayerMaxPool(relu1))
 
-        cnn_layer2 = self.add_layer(maxpool1)
+        cnn_layer2 = self.add_layer(LayerCNN(maxpool1))
         relu2 = self.add_layer(ActivationReLU(cnn_layer2))
         maxpool2 = self.add_layer(LayerMaxPool(relu2))
 
-        cnn_layer3 = self.add_layer(maxpool2)
-        relu3 = self.add_layer(ActivationReLU(cnn_layer3))
-        maxpool3 = self.add_layer(LayerMaxPool(relu3))
-
-        flatten = self.add_layer(LayerFlatten(maxpool3))
-        n_neurons = 640
+        flatten = self.add_layer(LayerFlatten(maxpool2))
+        n_neurons = 2560
         dense = self.add_layer(LayerDense(flatten, n_neurons, len(self.labels)))
 
         self.accuracy = 0
         self.loss = 0
         self.N_EPOCH = 5
-        self.BATCH_SIZE = 30
+        self.BATCH_SIZE = 5
 
     def get_count_output(self, cnn, maxpool, height, width):
         return (height // maxpool.pool) * (width // maxpool.pool) * cnn.N_FILTERS
