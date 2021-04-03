@@ -4,11 +4,12 @@ from layer import Layer
 
 
 class LayerCNN(Layer):
-    def __init__(self, prev_layer):
+    def __init__(self, prev_layer, input_windows):
         super().__init__(prev_layer)
         self.stride = 3
         self.N_FILTERS = 4
-        self.weights = np.random.randn(self.N_FILTERS, self.stride, self.stride) / (self.stride * self.stride)
+        self.input_windows = input_windows
+        self.weights = np.random.randn(self.N_FILTERS, self.input_windows, self.stride, self.stride) / (self.stride * self.stride)
         self.dweights = None
         self.inputs = None
 
@@ -25,26 +26,25 @@ class LayerCNN(Layer):
         n_items, n_windows, height, width = self.inputs.shape
 
         for item_index in range(n_items):
-            for kernel in self.weights:
-                for window_index in range(n_windows):
-                    for height_index in range(height - self.stride + 1):
-                        for width_index in range(width - self.stride + 1):
-                            image_region = self.inputs[
-                                           item_index,
-                                           window_index,
-                                           height_index: (height_index + self.stride),
-                                           width_index: (width_index + self.stride)]
-
-                            yield image_region, kernel, item_index, window_index, height_index, width_index
+            for kernel_index,kernel in enumerate(self.weights):
+                for height_index in range(height - self.stride + 1):
+                    for width_index in range(width - self.stride + 1):
+                        image_region = self.inputs[
+                                       item_index,
+                                       :,
+                                       height_index: (height_index + self.stride),
+                                       width_index: (width_index + self.stride)]
+                        kernel = self.weights[kernel_index]
+                        yield item_index, image_region, height_index, width_index, kernel_index, kernel
 
     def forward(self, inputs, y_true=None):
         self.inputs = inputs
         n_items, n_windows, height, width = inputs.shape
         self.inputs = self.padding(self.inputs)
-        self.output = np.zeros((n_items, self.N_FILTERS * n_windows, height, width))
+        self.output = np.zeros((n_items, self.N_FILTERS, height, width))
 
-        for image_region, kernel, item_index, window_index, height_index, width_index in self.iterate_regions():
-            self.output[item_index, window_index, height_index, width_index] = np.sum(image_region * kernel)
+        for item_index, image_region, height_index, width_index, kernel_index, kernel in self.iterate_regions():
+            self.output[item_index, kernel_index, height_index, width_index] = np.sum(image_region * kernel)
 
         return self.output
 
@@ -52,10 +52,10 @@ class LayerCNN(Layer):
         self.dweights = np.zeros_like(self.weights)
         self.dinputs = np.zeros_like(self.inputs)
 
-        for image_region, kernel, item_index, window_index, height_index, width_index in self.iterate_regions():
-            self.dweights += dvalues[item_index, window_index, height_index, width_index] * image_region
+        for item_index, image_region, height_index, width_index, kernel_index, kernel in self.iterate_regions():
+            self.dweights[kernel_index] += dvalues[item_index, kernel_index, height_index, width_index] * image_region
             self.dinputs[item_index,
-                         window_index,
+                         :,
                          height_index: (height_index + self.stride),
                          width_index: (width_index + self.stride)
-                        ] += dvalues[item_index, window_index, height_index, width_index] * kernel
+                        ] += dvalues[item_index, :, height_index, width_index] * kernel
