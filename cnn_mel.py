@@ -12,9 +12,8 @@ test_x = preprocessor.preprocess_mel(test_x)
 
 nn = cnn.CNN(train_x, train_y, test_x, test_y)
 nn.train()
+
 accuracy, loss = nn.test()
-print("Test Accuracy")
-print(accuracy)
-print("Test Loss")
-print(nn.loss)
+print(f"Test Accuracy {accuracy}. Test Loss ${loss}")
+
 
