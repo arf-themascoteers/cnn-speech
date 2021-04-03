@@ -34,7 +34,7 @@ class CNN:
         self.output_layer = OutputLayer(self.input_layer)
         self.input_layer.next_layer = self.output_layer
 
-        cnn_layer1 = self.add_layer(LayerCNN(self.input_layer))
+        cnn_layer1 = self.add_layer(LayerCNN(self.input_layer,1))
         relu1 = self.add_layer(ActivationReLU(cnn_layer1))
         maxpool1 = self.add_layer(LayerMaxPool(relu1))
 

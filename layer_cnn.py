@@ -54,8 +54,8 @@ class LayerCNN(Layer):
 
         for item_index, image_region, height_index, width_index, kernel_index, kernel in self.iterate_regions():
             self.dweights[kernel_index] += dvalues[item_index, kernel_index, height_index, width_index] * image_region
-            self.dinputs[item_index,
-                         :,
+            to_add = dvalues[item_index, kernel_index, height_index, width_index] * kernel
+            self.dinputs[item_index, :,
                          height_index: (height_index + self.stride),
                          width_index: (width_index + self.stride)
-                        ] += dvalues[item_index, :, height_index, width_index] * kernel
+                        ] += to_add
