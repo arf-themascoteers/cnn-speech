@@ -17,3 +17,4 @@ class ActivationReLU(Layer):
     def backward(self, dvalues, y_true=None):
         self.dinputs = dvalues.copy()
         self.dinputs[self.inputs <= 0] = 0
+        return self.dinputs

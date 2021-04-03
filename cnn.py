@@ -55,8 +55,8 @@ class CNN:
 
         self.accuracy = 0
         self.loss = 0
-        self.N_EPOCH = 5
-        self.BATCH_SIZE = 5
+        self.N_EPOCH = 10
+        self.BATCH_SIZE = 10
 
     def get_count_output(self, cnn, maxpool, height, width):
         return (height // maxpool.pool) * (width // maxpool.pool) * cnn.N_FILTERS
