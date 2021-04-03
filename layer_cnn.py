@@ -59,3 +59,4 @@ class LayerCNN(Layer):
                          height_index: (height_index + self.stride),
                          width_index: (width_index + self.stride)
                         ] += to_add
+            self.dweights[kernel_index] = self.dweights[kernel_index] / self.inputs.shape[0]
